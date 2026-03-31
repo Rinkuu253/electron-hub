@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Electron Hub</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  </head>
+  <body>
+    <h1>USB Drive Reader!</h1>
+    <p>
+      We are using Node.js <span id="node-version"></span>,
+      Chromium <span id="chrome-version"></span>,
+      and Electron <span id="electron-version"></span>.
+    </p>
+
+    <div style="margin-top: 20px;">
+      <button id="find-usb">Find USB Drives</button>
+      <div id="drive-list" style="margin-top: 10px; display: flex; gap: 10px;"></div>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <h3 id="current-path"></h3>
+      <ul id="file-list" style="list-style-type: none; padding-left: 0;"></ul>
+    </div>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>
