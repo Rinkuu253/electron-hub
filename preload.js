@@ -2,7 +2,9 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
   getUSBDrives: () => ipcRenderer.invoke('get-usb-drives'),
-  readDir: (path) => ipcRenderer.invoke('read-dir', path)
+  readDir: (path) => ipcRenderer.invoke('read-dir', path),
+  getPrinters: () => ipcRenderer.invoke('get-printers'),
+  printPage: (printerName) => ipcRenderer.invoke('print-page', printerName)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

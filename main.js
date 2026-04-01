@@ -7,12 +7,24 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    fullscreenable: true,
+    // titleBarStyle: 'hidden',        // hide native title bar
+    titleBarOverlay: {              // keep Win control buttons (min/max/close)
+      color: '#2b2b2b',
+      symbolColor: '#ffffff',
+      height: 30
+    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  win.loadFile('index.html')
+  const isDev = !app.isPackaged;
+  if (isDev) {
+    win.loadURL('http://localhost:5173')
+  } else {
+    win.loadFile(path.join(__dirname, 'dist', 'index.html'))
+  }
 }
 
 app.whenReady().then(() => {
@@ -47,6 +59,23 @@ app.whenReady().then(() => {
       console.error('Failed to read dir:', e);
       return [];
     }
+  });
+
+  ipcMain.handle('get-printers', async (event) => {
+    return await event.sender.getPrintersAsync()
+  });
+
+  ipcMain.handle('print-page', async (event, printerName) => {
+    return new Promise((resolve) => {
+      event.sender.print({
+        silent: true,
+        printBackground: true,
+        deviceName: printerName
+      }, (success, errorType) => {
+        if (!success) console.error('Print failed:', errorType)
+        resolve(success)
+      })
+    })
   });
 
   createWindow()
