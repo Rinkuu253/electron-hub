@@ -1,22 +1,38 @@
 import { defineComponent, ref } from 'vue';
 import Sidebar from './components/Sidebar';
+import { useShortcut } from './composables/useShortcut';
 
 export default defineComponent({
   name: 'App',
   setup() {
+    // Theme state
+    const isDark = ref(true);
+
+    // Register F1 Shortcut
+    useShortcut('shift+F1', () => {
+      alert('F1 pressed! Triggering an action...');
+    });
+
+    // Register Ctrl+L Shortcut for theme toggle
+    useShortcut('ctrl+l', () => {
+      isDark.value = !isDark.value;
+    });
+
     return () => (
-      <div class="flex h-screen bg-gray-900 text-black font-sans overflow-hidden">
+      <div class={`flex h-screen font-sans overflow-hidden transition-colors duration-300 ${isDark.value ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'}`}>
         <Sidebar />
         
         <main class="flex-1 flex flex-col items-center justify-center relative relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/20 to-purple-900/20 mix-blend-overlay pointer-events-none"></div>
+          <div class={`absolute inset-0 mix-blend-overlay pointer-events-none ${isDark.value ? 'bg-gradient-to-br from-indigo-900/20 to-purple-900/20' : 'bg-gradient-to-br from-indigo-200/50 to-purple-200/50'}`}></div>
           
-          <div class="z-10 p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 max-w-2xl w-full mx-8 shadow-2xl">
-            <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-black mb-4">
+          <div class={`z-10 p-8 rounded-2xl backdrop-blur-xl border max-w-2xl w-full mx-8 shadow-2xl transition-all duration-300 ${isDark.value ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200 shadow-xl'}`}>
+            <h1 class={`text-4xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent mb-4`}>
               Welcome to Your App
             </h1>
-            <p class="text-gray-400 text-lg mb-8">
-              This is a clean, modern template using pure Vue JSX and Tailwind CSS. Feel free to modify the Sidebar and this content area to start building your application!
+            <p class={`text-lg mb-8 ${isDark.value ? 'text-gray-400' : 'text-gray-600'}`}>
+              This is a clean, modern template using pure Vue JSX and Tailwind CSS. 
+              <br />
+              <strong>Tip:</strong> Press <strong>F1</strong> to test a button trigger, or <strong>Ctrl + L</strong> to change the theme!
             </p>
             
             <div class="grid grid-cols-2 gap-4">
