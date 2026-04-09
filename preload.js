@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Listen for the main process to push user data right after window opens
   onUserData: (callback)     => ipcRenderer.on('user-data', (_event, data) => callback(data)),
+
+  // ── Hardware Events ──────────────────────────────────────────────────────
+  onHardwareEvent: (callback) => ipcRenderer.on('hardware-event', (_event, eventData) => callback(eventData)),
 })
 
 window.addEventListener('DOMContentLoaded', () => {

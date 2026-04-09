@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, Menu, globalShortcut } = require('electron'
 const path = require('path')
 const { exec } = require('child_process')
 const fs = require('fs/promises')
+const { monitorSerialPorts, startTcpListeners } = require('./hardware-listener')
 
 const isDev = !app.isPackaged
 
@@ -218,6 +219,18 @@ app.whenReady().then(() => {
 
   // ── IPC: Get user data (pull model) ───────────────────────────────────────
   ipcMain.handle('get-user-data', () => loggedInUser)
+
+  // ── Start Hardware Listeners ──────────────────────────────────────────────
+  const handleHardwareEvent = (type, detail) => {
+    console.log(`[Main] Hardware Event: ${type} - ${detail}`)
+    const targetWin = mainWin || loginWin
+    if (targetWin && !targetWin.isDestroyed()) {
+      targetWin.webContents.send('hardware-event', { type, detail })
+    }
+  }
+
+  monitorSerialPorts(handleHardwareEvent)
+  startTcpListeners([5000, 5001, 8080], handleHardwareEvent)
 
   // ── Start with the login window ────────────────────────────────────────────
   createLoginWindow()
